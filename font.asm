@@ -1,3 +1,5 @@
+text_color db 0xf
+
 ; writes a string of uppercase chars
 write_string:
     %push
@@ -48,7 +50,7 @@ write_char:
     mul bx
     add ax, font
 
-    call_ draw_bitmap, ax, word [x], word [y], 5, 6
+    call_ draw_bitmap, ax, word [x], word [y], 5, 6, word [text_color]
 
     pop bp
     ret 6

@@ -3,7 +3,9 @@ bm_y_stop dw 0 ; y + height
 draw_bitmap:
     %push
     %stacksize large
-    %arg bitmap_address:word, x:word, y:word, width:word, height:word
+    ; color is used as the foreground for black and white bitmaps
+    ; on colored bitmaps, it should be set to one
+    %arg bitmap_address:word, x:word, y:word, width:word, height:word, color:word
 
     push bp
     mov bp, sp
@@ -23,13 +25,15 @@ draw_bitmap:
     add ax, [height] ; put height in ax
     mov [bm_y_stop], ax
 
-    mov ah, 0x0c ; set graphics op to draw pixel
+    
 
     .for_y:
         mov cx, [x] ; set cursor x to first column
         .for_x:
-            mov al, [si] ; read bitmap
-            int 0x10     ; tell bios to draw pixel
+            mov al, [si]     ; read bitmap
+            mul byte [color] ; change color
+            mov ah, 0x0c     ; set graphics op to draw pixel
+            int 0x10         ; tell bios to draw pixel
 
             inc si ; move forward one pixel in bitmap
             inc cx ; move cursor forward one
@@ -42,5 +46,5 @@ draw_bitmap:
 
     pop si
     pop bp
-    ret 10
+    ret 12
     %pop
