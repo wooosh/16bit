@@ -1,0 +1,3 @@
+nasm kernel.asm -f bin -o kernel.bin
+qemu-system-i386 -hda kernel.bin -serial stdio -d int
+#gdb kernel.bin
