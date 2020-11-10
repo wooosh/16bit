@@ -10,6 +10,8 @@ mov sp, 0x7C00
 jmp 0x0:next ; set cs
 next:
 
+mov [drive_number], dl
+
 ; set up serial channel 0
 mov ah, 0          ; set serial operation to init channel
 mov al, 0b11100011 ; set serial socket options
@@ -19,44 +21,39 @@ int 0x14
 push msg_started
 call serial_write_string
 
-push msg_loadft
+push msg_load_os
 call serial_write_string
 
-call fs_load_ft
+push 0x7E00 ; Read program into the area after the boot sector
+push 2      ; Start read right after boot sector
+push 1      ; Read one sector
+call fs_read_sectors
 cmp ax, 1
-je errorft
+je error_fs
 
-push msg_loadedft
+push msg_loaded_os
 call serial_write_string
 
-cli
-hlt
+push msg_jmp_os
+call serial_write_string
 
 jmp 0x7E00 ; jump to the area we read from disk
 
-errorft:
-    push msg_errorft
+error_fs:
+    push msg_error_fs
     call serial_write_string
     cli
     hlt
 
-%include "src/lib/strings.asm"
 %include "src/lib/serial.asm"
 %include "src/lib/fs.asm"
 
-msg_started  db 'Bootloader Started', 0x0d, 0x0a, 0
-msg_loadft   db 'Looking for file table', 0x0d, 0x0a, 0
-msg_loadedft db 'Loaded file table', 0x0d, 0x0a, 0
-msg_errorft  db 'File table error. Halting', 0x0d, 0x0a, 0
-
-
+msg_started   db '[INFO] Bootloader Started', 0x0d, 0x0a, 0
+msg_load_os   db '[INFO] Loading OS into memory...', 0x0d, 0x0a, 0
+msg_loaded_os db '[INFO] Loaded OS into memory', 0x0d, 0x0a, 0
+msg_jmp_os    db '[INFO] Exiting bootloader, Entering OS', 0x0d, 0x0a, 0
+msg_error_fs  db '[ERROR] Filesystem error. Halting', 0x0d, 0x0a, 0
 
 
 times 510-($-$$) db 0
 dw 0AA55h ; bios signature
-
-; memory map
-; 0x00000500 - 0x00007BFF: stack, grows downward (30kb)
-; 0x00007C00 - 0x00007DFF: bootsector (512b)
-; 0x00007E00 - 0x0007FFFF: heap, grows downward (~33kb)
-; 0x00010000 - 0x0007FFFF: heap, needs to be accessed with ES (458kb)
