@@ -23,20 +23,3 @@ serial_write_string:
     pop bp
     ret 2
 
-; args: w:word(4)
-serial_write_word:
-    push bp
-    mov bp, sp
-
-    mov dx, 0x0
-    mov ah, 0x1
-    mov al, [bp+4]
-    add al, 65
-    int 0x14
-    mov ah, 0x1
-    mov al, [bp+5]
-    add al, 65
-    int 0x14
-    
-    pop bp
-    ret 2

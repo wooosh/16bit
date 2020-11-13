@@ -1,5 +1,7 @@
 strings_test:
     call strcmp_test
+    call startswith_test
+    call get_hex_nibble_test
     ret
 
 ; pointer to address name string string
@@ -117,3 +119,13 @@ startswith_null_eq_b db 0
 startswith_test_null_inequal db "startswith '', 'abc'", 0
 startswith_null_ineq_a db 0
 startswith_null_ineq_b db "abc", 0
+
+get_hex_nibble_test:
+    push 8
+    call get_hex_byte
+    mov [testa], ax
+    push testa
+    call serial_write_string
+    ret
+
+testa db 0,0,0

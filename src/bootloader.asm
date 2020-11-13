@@ -48,6 +48,7 @@ error_fs:
 %include "src/lib/serial.asm"
 %include "src/lib/fs.asm"
 
+
 msg_started   db '[INFO] Bootloader Started', 0x0d, 0x0a, 0
 msg_load_os   db '[INFO] Loading OS into memory...', 0x0d, 0x0a, 0
 msg_loaded_os db '[INFO] Loaded OS into memory', 0x0d, 0x0a, 0

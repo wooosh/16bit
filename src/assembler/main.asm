@@ -19,9 +19,6 @@ bits 16
   ; actual assembly code
   push msg_start
   call serial_write_string
-  
-  push word 1
-  call serial_write_word
 
   ; set up segments
   mov ax, 0x1000
@@ -29,7 +26,7 @@ bits 16
 
   mov si, file_start
   xor di, di ; set at beginning of file register
-
+  
   ; main loop, reads instructions and encodes them
   read_next:
       call inst_int
@@ -69,4 +66,4 @@ out_idx dw 0
 
 ; we use this to signify the end of our code
 file_start:
-db "int 65", 0
+db "int 10", 0

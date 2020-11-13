@@ -81,16 +81,16 @@ read_int:
     xor ax, ax ; set num to start at zero
     xor cx, cx ; cx will be set to one if we read atleast one character
 
-    mov dl, 10 ; used as a const
+    mov dl, 10 ; used for place value
     read_int_loop:
-        ; each character we read increase the place value 
-        mul dl
-
         ; check if it is a number 0-9 (ascii 48-57)
         cmp byte [si], 48
         jb read_int_ret
         cmp byte [si], 57
         jg read_int_ret
+
+        ; each character we read increase the place value 
+        mul dl
 
         ; add to counter and convert from ascii to decimal
         add ax, [si]
@@ -104,4 +104,54 @@ read_int:
     read_int_ret:
         pop si
         pop bp
-        ret 4
+        ret 2
+
+; args: byte(4)
+; returns: ax=ascii version of input byte (eg "f0")  
+get_hex_byte:
+    push bp
+    mov bp, sp
+    push bx
+
+    xor bx, bx
+    mov cx, [bp+4]
+    xor ch, ch
+
+    ; first character
+    ror cx, 4
+    mov bl, cl
+    mov al, [nibble_hex_table+bx]
+    
+    ; second character
+    shr ch, 4
+    mov bl, ch
+    mov ah, [nibble_hex_table+bx]
+
+    pop bx
+    pop bp
+    ret 2
+
+nibble_hex_table db '0123456789ABCDEF'
+
+; args: byte(6), buffer(4)
+get_hex_word:
+    push bp
+    mov bp, sp
+    push bx
+
+    mov bx, [bp+4]
+
+    mov cx, [bp+6]
+    push cx
+    call get_hex_byte
+    mov [bx+2], ax
+
+    mov cx, [bp+6]
+    shr cx, 8
+    push cx
+    call get_hex_byte
+    mov [bx], ax
+    
+    pop bx
+    pop bp
+    ret 2

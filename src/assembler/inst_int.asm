@@ -12,28 +12,14 @@ inst_int:
     cmp cx, 0
     je err
     ;mov ax, 1
-
-            push msg_start
-    call serial_write_string
-
-    add ax, 48
-
     push ax
-    mov byte [bruh], al
-    push bruh
+    push hex_word_buf
+    call get_hex_word
+    push hex_word_buf
     call serial_write_string
-    pop ax
-
-    mov byte [bruh], al
-    push bruh
-    call serial_write_string
-    ;mov byte [bruh], 65
-    ;push bruh
-    ;call serial_write_string
 
     cli
     hlt
 
-bruh dw 0, 0
-
+hex_word_buf db 0,0,0,0,0
 inst_int_text db 'int ', 0
