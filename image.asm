@@ -1,6 +1,6 @@
 incbin "bin/bootloader.bin"
 incbin "bin/assembler.bin"
-times (512*2)-($-$$) db 0
+times (512*3)-($-$$) db 0
 
 ; misc docs
 

@@ -5,7 +5,6 @@ serial_write_string:
     
     push si
     mov si, [bp+4]
-
     
     mov dx, 0x0 ; set serial channel 0
     write_string_loop:
@@ -22,4 +21,22 @@ serial_write_string:
     write_string_end:
     pop si
     pop bp
-    ret 4
+    ret 2
+
+; args: w:word(4)
+serial_write_word:
+    push bp
+    mov bp, sp
+
+    mov dx, 0x0
+    mov ah, 0x1
+    mov al, [bp+4]
+    add al, 65
+    int 0x14
+    mov ah, 0x1
+    mov al, [bp+5]
+    add al, 65
+    int 0x14
+    
+    pop bp
+    ret 2

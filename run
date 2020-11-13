@@ -1,9 +1,8 @@
 mkdir -p bin/
 
-nasm src/bootloader.asm   -f bin -o bin/bootloader.bin
-nasm src/assembler.asm    -f bin -o bin/assembler.bin
+nasm src/bootloader.asm     -f bin -o bin/bootloader.bin
+nasm src/assembler/main.asm -f bin -o bin/assembler.bin
+nasm image.asm              -f bin -o bin/os.bin
 
-nasm image.asm            -f bin -o bin/os.bin
-
-qemu-system-i386 -hda bin/os.bin -serial stdio -no-reboot #-d int
+qemu-system-i386 -hda bin/os.bin -serial stdio -no-reboot #-s -S & #-d int
 #gdb kernel.bin

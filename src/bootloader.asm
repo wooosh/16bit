@@ -26,7 +26,7 @@ call serial_write_string
 
 push 0x7E00 ; Read program into the area after the boot sector
 push 2      ; Start read right after boot sector
-push 1      ; Read one sector
+push 3      ; Read two sectors
 call fs_read_sectors
 cmp ax, 1
 je error_fs
